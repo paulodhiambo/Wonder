@@ -36,7 +36,9 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <activity android:name=".ui.users.UserListActivity" />
+        <activity
+            android:name=".ui.users.UserListActivity"
+            android:parentActivityName=".ui.home.HomeActivity" />
         <activity android:name=".ui.home.HomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
