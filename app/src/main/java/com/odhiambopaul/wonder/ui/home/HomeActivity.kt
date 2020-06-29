@@ -49,8 +49,8 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         private const val REQUEST_IMAGE_CAPTURE = 1
     }
 
-    private val lat = MutableLiveData<Double>()
-    private val long = MutableLiveData<Double>()
+    private val lat = MutableLiveData<String>()
+    private val long = MutableLiveData<String>()
     private val selectedGender = MutableLiveData<String>()
     private val name = MutableLiveData<String>()
     private val photo = MutableLiveData<String>()
@@ -69,8 +69,8 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
 
     private val airLocation = AirLocation(this, object : AirLocation.Callback {
         override fun onSuccess(locations: ArrayList<Location>) {
-            lat.value = locations[0].latitude
-            long.value = locations[0].longitude
+            lat.value = locations[0].latitude.toString()
+            long.value = locations[0].longitude.toString()
             val pos = locations[0].latitude
             Log.d("Location::=======>", pos.toString())
         }
@@ -102,27 +102,18 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         getLocationPermission()
         mapView.onCreate(savedInstanceState)
         mapView.getMapAsync {
-            if (lat.value != null && long.value != null) {
-                val currentLocation = LatLng(lat.value?.toDouble()!!, long.value?.toDouble()!!)
-                Log.d("L:::::::::=======>", currentLocation.toString())
-                it.addMarker(
-                    MarkerOptions().position(currentLocation).title("My Location").draggable(
-                        true
-                    )
-                )
-                it.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15f))
-            } else {
-                // Add a marker in Nairobi and move the camera
-                val sydney = LatLng(-1.2810386570537482, 36.815142296254635)
-                it.addMarker(MarkerOptions().position(sydney).title("My Location").draggable(true))
-                //it.moveCamera(CameraUpdateFactory.newLatLng(sydney))
-                it.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney, 15f))
-            }
+            // Add a marker in Nairobi and move the camera
+            val sydney = LatLng(-1.2810386570537482, 36.815142296254635)
+            lat.value = sydney.latitude.toString()
+            long.value = sydney.longitude.toString()
+            it.addMarker(MarkerOptions().position(sydney).title("My Location").draggable(true))
+            //it.moveCamera(CameraUpdateFactory.newLatLng(sydney))
+            it.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney, 15f))
             it.setOnMarkerDragListener(object : GoogleMap.OnMarkerDragListener {
                 override fun onMarkerDragEnd(p0: Marker?) {
                     Log.d("Drag started at ", "")
-                    lat.value = p0?.position?.latitude
-                    long.value = p0?.position?.longitude
+                    lat.value = p0?.position?.latitude.toString()
+                    long.value = p0?.position?.longitude.toString()
                 }
 
                 override fun onMarkerDragStart(p0: Marker?) {
@@ -143,17 +134,18 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
                 "Location::::",
                 "Location: ${lat.value} ${long.value} Gender: ${selectedGender.value} Name: ${name.value}"
             )
+
         }
         btn_take_photo.setOnClickListener {
             captureImage()
         }
-        btn_save_local.setOnClickListener {
+        btn_save_local_to_db.setOnClickListener {
             val user =
                 User(
-                    name.value!!,
+                    name_text.text.toString(),
                     selectedGender.value!!,
-                    lat.value.toString(),
-                    long.value.toString(),
+                    lat.value!!,
+                    long.value!!,
                     photo.value!!
                 )
             saveUser(homeViewModel, user)
@@ -255,6 +247,8 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
             val bitmap = BitmapFactory.decodeFile(photoFile!!.absolutePath)
             picture_preview.setImageBitmap(bitmap)
 
+        } else {
+            Toast.makeText(this, "Request Cancelled", Toast.LENGTH_LONG).show()
         }
     }
 
