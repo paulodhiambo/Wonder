@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Wonder</string>
+    <string name="take_photo">Take Photo</string>
+    <string name="capture_location">Capture Location</string>
+    <string name="save_local">Save Local</string>
+    <string name="list">List</string>
+    <string name="upload">Upload</string>
+    <string name="name">Name</string>
+    <string name="profile">profile</string>
+    <string name="title_activity_maps">Map</string>
+</resources>
