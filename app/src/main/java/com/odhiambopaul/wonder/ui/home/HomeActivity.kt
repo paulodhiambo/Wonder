@@ -42,6 +42,7 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
+import kotlin.math.round
 
 
 class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
@@ -70,8 +71,8 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
 
     private val airLocation = AirLocation(this, object : AirLocation.Callback {
         override fun onSuccess(locations: ArrayList<Location>) {
-            lat.value = locations[0].latitude.toString()
-            long.value = locations[0].longitude.toString()
+            lat.value = locations[0].latitude.round(3).toString()
+            long.value = locations[0].longitude.round(3).toString()
             val pos = locations[0].latitude
             Log.d("Location::=======>", pos.toString())
         }
@@ -105,16 +106,16 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         mapView.getMapAsync {
             // Add a marker in Nairobi and move the camera
             val sydney = LatLng(-1.2810386570537482, 36.815142296254635)
-            lat.value = sydney.latitude.toString()
-            long.value = sydney.longitude.toString()
+            lat.value = sydney.latitude.round(3).toString()
+            long.value = sydney.longitude.round(3).toString()
             it.addMarker(MarkerOptions().position(sydney).title("My Location").draggable(true))
             //it.moveCamera(CameraUpdateFactory.newLatLng(sydney))
             it.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney, 15f))
             it.setOnMarkerDragListener(object : GoogleMap.OnMarkerDragListener {
                 override fun onMarkerDragEnd(p0: Marker?) {
                     Log.d("Drag started at ", "")
-                    lat.value = p0?.position?.latitude.toString()
-                    long.value = p0?.position?.longitude.toString()
+                    lat.value = p0?.position?.latitude?.round(3).toString()
+                    long.value = p0?.position?.longitude?.round(3).toString()
                 }
 
                 override fun onMarkerDragStart(p0: Marker?) {
@@ -165,6 +166,13 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
             )
         }
         btn_upload_users.setOnClickListener { saveUserOnline(homeViewModel) }
+    }
+
+    //extension function to round lat and long
+    fun Double.round(decimals: Int): Double {
+        var multiplier = 1.0
+        repeat(decimals) { multiplier *= 10 }
+        return round(this * multiplier) / multiplier
     }
 
     private fun validateData(): Boolean {
