@@ -141,15 +141,20 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
             captureImage()
         }
         btn_save_local_to_db.setOnClickListener {
-            val user =
-                User(
-                    name_text.text.toString(),
-                    selectedGender.value!!,
-                    lat.value!!,
-                    long.value!!,
-                    photo.value!!
-                )
-            saveUser(homeViewModel, user)
+            if (validateData()) {
+                val user =
+                    User(
+                        name_text.text.toString(),
+                        selectedGender.value!!,
+                        lat.value!!,
+                        long.value!!,
+                        photo.value!!
+                    )
+                saveUser(homeViewModel, user)
+            } else {
+                Toast.makeText(this, "Fill all fields", Toast.LENGTH_LONG).show()
+            }
+
         }
         btn_user_list.setOnClickListener {
             startActivity(
