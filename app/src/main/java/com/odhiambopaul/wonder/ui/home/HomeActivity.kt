@@ -162,41 +162,55 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         btn_upload_users.setOnClickListener { saveUserOnline(homeViewModel) }
     }
 
+    private fun validateData(): Boolean {
+        name.value = name_text.text.toString()
+        return !(name.value == null || lat.value == null || long.value == null || photo.value == null)
+    }
+
     private fun saveUserOnline(homeViewModel: HomeViewModel) {
         val loadingBar = ProgressDialog(this)
         loadingBar.setTitle("Uploading User")
         loadingBar.setMessage("Please Wait...")
-        homeViewModel.status.observe(this, androidx.lifecycle.Observer {
-            loadingBar.show()
-            if (it.toString() == "success") {
-                loadingBar.hide()
-                Toast.makeText(this, "Uploaded Successfully", Toast.LENGTH_LONG).show()
-            } else if (it.toString() == "fail") {
-                loadingBar.hide()
-                Toast.makeText(this, "An error occurred", Toast.LENGTH_LONG).show()
-            }
-        })
-        val file = File(photo.value!!);
-        val requestFile = file.asRequestBody("multipart/form-data".toMediaTypeOrNull());
-        val body = MultipartBody.Part.createFormData("image", file.name, requestFile)
-        val fName =
-            name_text.text.toString().toRequestBody("multipart/form-data".toMediaTypeOrNull())
-        val gender =
-            "${selectedGender.value}".toRequestBody("multipart/form-data".toMediaTypeOrNull())
-        val latitude = "${lat.value}".toRequestBody("multipart/form-data".toMediaTypeOrNull())
-        val longitude = "${long.value}".toRequestBody("multipart/form-data".toMediaTypeOrNull())
-        homeViewModel.uploadUsers(fName, gender, latitude, longitude, body)
+        if (validateData()) {
+            homeViewModel.status.observe(this, androidx.lifecycle.Observer {
+                loadingBar.show()
+                if (it.toString() == "success") {
+                    loadingBar.hide()
+                    Toast.makeText(this, "Uploaded Successfully", Toast.LENGTH_LONG).show()
+                } else if (it.toString() == "fail") {
+                    loadingBar.hide()
+                    Toast.makeText(this, "An error occurred", Toast.LENGTH_LONG).show()
+                }
+            })
+            val file = File(photo.value!!);
+            val requestFile = file.asRequestBody("multipart/form-data".toMediaTypeOrNull());
+            val body = MultipartBody.Part.createFormData("image", file.name, requestFile)
+            val fName =
+                name_text.text.toString().toRequestBody("multipart/form-data".toMediaTypeOrNull())
+            val gender =
+                "${selectedGender.value}".toRequestBody("multipart/form-data".toMediaTypeOrNull())
+            val latitude = "${lat.value}".toRequestBody("multipart/form-data".toMediaTypeOrNull())
+            val longitude = "${long.value}".toRequestBody("multipart/form-data".toMediaTypeOrNull())
+            homeViewModel.uploadUsers(fName, gender, latitude, longitude, body)
+        } else {
+            Toast.makeText(this, "Fill all fields", Toast.LENGTH_LONG).show()
+        }
     }
 
     private fun saveUser(homeViewModel: HomeViewModel, user: User) {
-        homeViewModel.saveUserLocal(user)
-        homeViewModel.status.observe(this, androidx.lifecycle.Observer {
-            if (it.toString() == "success") {
-                Toast.makeText(this, "Saved Successfully", Toast.LENGTH_LONG).show()
-            } else if (it.toString() == "fail") {
-                Toast.makeText(this, "User already Exist", Toast.LENGTH_LONG).show()
-            }
-        })
+        if (validateData()) {
+            homeViewModel.saveUserLocal(user)
+            homeViewModel.status.observe(this, androidx.lifecycle.Observer {
+                if (it.toString() == "success") {
+                    Toast.makeText(this, "Saved Successfully", Toast.LENGTH_LONG).show()
+                } else if (it.toString() == "fail") {
+                    Toast.makeText(this, "User already Exist", Toast.LENGTH_LONG).show()
+                }
+            })
+        } else {
+            Toast.makeText(this, "Fill all fields", Toast.LENGTH_LONG).show()
+        }
+
     }
 
 
