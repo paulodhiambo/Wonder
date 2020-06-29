@@ -17,4 +17,8 @@ class DatabaseRepository @Inject constructor(wonderDb: WonderDb) {
     fun getUsers(): Flowable<List<User>> {
         return userDao.getUsers()
     }
+
+    fun deleteAllUsers(): Completable {
+        return userDao.deleteAllUsers()
+    }
 }

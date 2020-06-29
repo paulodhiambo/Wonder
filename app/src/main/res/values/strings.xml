@@ -8,4 +8,5 @@
     <string name="name">Name</string>
     <string name="profile">profile</string>
     <string name="title_activity_maps">Map</string>
+    <string name="delete_users">Delete Users</string>
 </resources>

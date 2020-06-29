@@ -14,4 +14,7 @@ interface UserDao {
 
     @Query("SELECT * FROM User")
     fun getUsers(): Flowable<List<User>>
+
+    @Query("DELETE FROM User")
+    fun deleteAllUsers(): Completable
 }

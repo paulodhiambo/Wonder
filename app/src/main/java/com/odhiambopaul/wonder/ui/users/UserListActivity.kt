@@ -1,6 +1,9 @@
 package com.odhiambopaul.wonder.ui.users
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
@@ -43,5 +46,34 @@ class UserListActivity : AppCompatActivity() {
                 userAdapter.addItems(users)
             }
         })
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.user_list_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.delete_all_users -> {
+                deleteAllUsers()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun deleteAllUsers() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Delete all Users ")
+            .setMessage("You are about to delete all users")
+            .setPositiveButton("Delete All") { _, _ ->
+                userListViewModel.deleteAllUsers()
+            }
+            .setNegativeButton("Cancel") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
+        builder.create()
     }
 }

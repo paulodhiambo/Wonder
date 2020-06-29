@@ -2,6 +2,7 @@ package com.odhiambopaul.wonder.ui.home
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.ProgressDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
@@ -162,6 +163,19 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     }
 
     private fun saveUserOnline(homeViewModel: HomeViewModel) {
+        val loadingBar = ProgressDialog(this)
+        loadingBar.setTitle("Uploading User")
+        loadingBar.setMessage("Please Wait...")
+        homeViewModel.status.observe(this, androidx.lifecycle.Observer {
+            loadingBar.show()
+            if (it.toString() == "success") {
+                loadingBar.hide()
+                Toast.makeText(this, "Uploaded Successfully", Toast.LENGTH_LONG).show()
+            } else if (it.toString() == "fail") {
+                loadingBar.hide()
+                Toast.makeText(this, "An error occurred", Toast.LENGTH_LONG).show()
+            }
+        })
         val file = File(photo.value!!);
         val requestFile = file.asRequestBody("multipart/form-data".toMediaTypeOrNull());
         val body = MultipartBody.Part.createFormData("image", file.name, requestFile)
@@ -172,13 +186,6 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         val latitude = "${lat.value}".toRequestBody("multipart/form-data".toMediaTypeOrNull())
         val longitude = "${long.value}".toRequestBody("multipart/form-data".toMediaTypeOrNull())
         homeViewModel.uploadUsers(fName, gender, latitude, longitude, body)
-        homeViewModel.status.observe(this, androidx.lifecycle.Observer {
-            if (it.toString() == "success") {
-                Toast.makeText(this, "Uploaded Successfully", Toast.LENGTH_LONG).show()
-            } else if (it.toString() == "fail") {
-                Toast.makeText(this, "An error occurred", Toast.LENGTH_LONG).show()
-            }
-        })
     }
 
     private fun saveUser(homeViewModel: HomeViewModel, user: User) {

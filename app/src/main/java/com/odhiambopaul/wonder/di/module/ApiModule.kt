@@ -16,7 +16,7 @@ class ApiModule {
     @Provides
     fun provideRetrofit(): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("http://paulodhiambo944.pythonanywhere.com/")
+            .baseUrl("https://paulodhiambo944.pythonanywhere.com/")
             .client(createClient()!!)
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .addConverterFactory(GsonConverterFactory.create())

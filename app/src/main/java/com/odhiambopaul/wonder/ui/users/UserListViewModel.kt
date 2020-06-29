@@ -33,4 +33,13 @@ class UserListViewModel @Inject constructor(
                 })
         )
     }
+
+    fun deleteAllUsers() {
+        compositeDisposable.add(
+            databaseRepository.deleteAllUsers()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({}, { t -> Log.e("Error::", t.localizedMessage!!) })
+        )
+    }
 }
